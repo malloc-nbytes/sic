@@ -10,9 +10,9 @@ data TokenType = TokenType
   | Macro
   | StringLiteral
   | EOF
-  deriving (Show)
+  deriving (Show, Eq)
 
 data Token = Token
   { tokenValue :: String,
     tokenType :: TokenType
-  } deriving Show
+  } deriving (Show)
