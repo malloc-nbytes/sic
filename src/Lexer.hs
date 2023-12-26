@@ -1,23 +1,7 @@
 module Lexer where
 
+import Token
 import Data.Char (isDigit, isAlpha)
-
-data TokenType = TokenType
-  | Comment
-  | LParen
-  | RParen
-  | Wildcard
-  | FuncCall
-  | IntegerLiteral
-  | Macro
-  | StringLiteral
-  | EOF
-  deriving Show
-
-data Token = Token
-  { tokenValue :: String,
-    tokenType :: TokenType
-  } deriving Show
 
 isIgnorable :: Char -> Bool
 isIgnorable c = c == '\t' || c == '\n' || c == ' '
