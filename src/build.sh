@@ -2,4 +2,4 @@
 
 set -xe
 
-ocamlc -o main main.ml
+ghc -o main Main.hs
