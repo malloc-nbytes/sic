@@ -13,6 +13,6 @@ data TokenType = TokenType
   deriving (Show, Eq)
 
 data Token = Token
-  { tokenValue :: String,
-    tokenType :: TokenType
+  { tokenValue :: String
+  , tokenType :: TokenType
   } deriving (Show)

@@ -1,12 +1,9 @@
 module Parser where
 
 import Token
+import Ast
 
---    LParen -> undefined
---    RParen -> undefined
---    IntegerLiteral -> undefined
-
-pExpect :: [Token] -> TokenType -> (Token, [Token])
+pExpect :: [Token.Token] -> Token.TokenType -> (Token.Token, [Token.Token])
 pExpect [] _ = error "no tokens in call to `expect ()`."
 pExpect (x:xs) t
   | tokenType x == t = (x, xs)
@@ -15,23 +12,60 @@ pExpect (x:xs) t
                 " /= actual: " ++
                 show (tokenType x)
 
-pPeak :: [Token] -> Maybe Token
+pPeak :: [Token.Token] -> Maybe Token.Token
 pPeak [] = Nothing
 pPeak tokens = Just $ head tokens
 
--- parseFuncCall [Token] -> String
--- parseFuncCall (x:xs) =
---   let body =
+-- data NodeFuncCall = NodeFuncCall
+--   { nodeFuncCallId :: String
+--   , nodeFuncCallArgs :: [NodeExpr]
+--   } deriving Show
 
-parseTokens :: [Token] -> String
-parseTokens [] = ""
+-- data NodeExpr = NodeExpr
+--   | NodeFuncCallExpr NodeFuncCall
+--   | NodeStringLiteral String
+--   | NodeIntegerLiteral Int
+--   deriving Show
+
+-- newtype NodeProg = NodeProg [NodeFuncCall] deriving Show
+
+tokenValueToStr :: Token.Token -> Int
+tokenValueToStr x = read (tokenValue x) :: Int
+
+parseFuncCall :: Token -> [Token] -> (Ast.NodeFuncCall, [Token.Token])
+parseFuncCall id [] = error ("could not parse" ++ show (tokenValue id))
+parseFuncCall id lst =
+  let (args, rest) = f lst []
+  in (Ast.NodeFuncCall (tokenValue id) args, rest)
+  where
+    f :: [Token.Token] -> [Ast.NodeExpr] -> ([Ast.NodeExpr], [Token.Token])
+    f [] _ = error "unterminated function call"
+    f (x:xs) acc
+      | tokenType x == Token.RParen = (acc, xs)
+      | tokenType x == Token.StringLiteral = f xs (acc ++ [Ast.NodeStringLiteral (tokenValue x)])
+      | tokenType x == Token.IntegerLiteral = f xs (acc ++ [Ast.NodeIntegerLiteral (tokenValueToStr x)])
+      | tokenType x == Token.FuncCall = f xs (acc ++ [Ast.NodeFuncCallExpr (parsePrimaryFuncCall x xs)])
+      | otherwise = error ("unsupported token type in function call: " ++ show (tokenType x))
+
+parsePrimaryFuncCall :: Token -> [Token.Token] -> Ast.NodeFuncCall
+parsePrimaryFuncCall id lst =
+  let (_, rest) = pExpect lst LParen
+  in let (fc, rest') = parseFuncCall id rest
+    in fc
+
+parseTokens :: [Token.Token] -> [Ast.NodeFuncCall]
+parseTokens [] = undefined
 parseTokens (x:xs) =
   case tokenType x of
-    EOF -> ""
-    Comment -> parseTokens xs
-    Wildcard -> "WILDCARD" ++ parseTokens xs
-    FuncCall -> undefined
-    Macro -> undefined
-    StringLiteral -> tokenValue x ++ parseTokens xs
-    _ -> error "unsupported TokenType"
+    Token.EOF -> []
+    Token.Comment -> parseTokens xs
+    Token.FuncCall -> parsePrimaryFuncCall x xs : parseTokens xs
+    Token.Macro -> error ("macros are unsupported " ++ show (tokenValue x))
+    Token.StringLiteral -> error $ "string literal not in function call " ++ show (tokenValue x)
+    Token.Wildcard -> error ("wildcard is not supported " ++ show (tokenType x))
+    _ -> error ("unsupported TokenType " ++ show (tokenType x))
+
+produceProgram :: [Token.Token] -> Ast.NodeProg
+produceProgram [] = Ast.NodeProg []
+produceProgram tokens = Ast.NodeProg $ parseTokens tokens
 

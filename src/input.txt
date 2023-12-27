@@ -1,6 +1,3 @@
-// r("hello world")
-// r54321("hello \"world\"")
+// r("hello" "world")
 
-"test"*
-
-
+repeat("hello" "world")

@@ -17,11 +17,11 @@ consumeUntil lst predicate = f lst []
       | predicate x = (acc, x : xs)
       | otherwise = f xs (acc ++ [x])
 
-peek :: [Char] -> Int -> Maybe Char
-peek [] _ = Nothing
-peek (x:xs) ahead
+lPeek :: [Char] -> Int -> Maybe Char
+lPeek [] _ = Nothing
+lPeek (x:xs) ahead
   | ahead < 1 = error "tried to peak () when `ahead` < 1"
-  | ahead /= 1 = peek xs (ahead-1)
+  | ahead /= 1 = lPeek xs (ahead-1)
   | otherwise = Just x
 
 lexFile :: [Char] -> [Token]
@@ -31,7 +31,7 @@ lexFile (x:xs)
   | isDigit x =
     let (value, rest) = consumeUntil (x : xs) (not . isDigit)
     in Token value IntegerLiteral : lexFile rest
-  | x == '/' && peek xs 1 == Just '/' =
+  | x == '/' && lPeek xs 1 == Just '/' =
     let (value, rest) = consumeUntil (tail xs) (== '\n')
     in Token value Comment : lexFile rest
   | x == '/' = error "unsupported char `/` without following `/`"
