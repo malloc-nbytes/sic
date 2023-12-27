@@ -51,6 +51,6 @@ parseTokens (x:xs) =
     Token.StringLiteral -> error $ "string literal not in function call " ++ show (tokenValue x)
     _ -> error $ "unsupported TokenType " ++ show (tokenType x)
 
-produceProgram :: [Token.Token] -> Ast.NodeProg
-produceProgram [] = Ast.NodeProg []
-produceProgram tokens = Ast.NodeProg $ parseTokens tokens
+produceProgram :: [Token.Token] -> [Ast.NodeFuncCall]
+produceProgram [] = []
+produceProgram tokens = parseTokens tokens

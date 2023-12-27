@@ -1,12 +1,10 @@
-// r("hello" "world")
-
-foo(
-  "ur"
-  "mom"
-  420
-)
-
-bar(
-  r()
-  69
+write(
+  r(
+    100
+    "hi "
+    "there"
+    n()
+    "hahahah"
+  )
+  "HELLO"
 )

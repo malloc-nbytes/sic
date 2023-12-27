@@ -10,5 +10,3 @@ data NodeExpr = NodeExpr
   | NodeStringLiteral String
   | NodeIntegerLiteral Int
   deriving Show
-
-newtype NodeProg = NodeProg [NodeFuncCall] deriving Show
