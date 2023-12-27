@@ -44,14 +44,16 @@ parseFuncCall id lst =
       | tokenType x == Token.RParen = (acc, xs)
       | tokenType x == Token.StringLiteral = f xs (acc ++ [Ast.NodeStringLiteral (tokenValue x)])
       | tokenType x == Token.IntegerLiteral = f xs (acc ++ [Ast.NodeIntegerLiteral (tokenValueToStr x)])
-      | tokenType x == Token.FuncCall = f xs (acc ++ [Ast.NodeFuncCallExpr (parsePrimaryFuncCall x xs)])
+      | tokenType x == Token.FuncCall =
+        let (fc, rest) = parsePrimaryFuncCall x xs
+        in f rest (acc ++ [Ast.NodeFuncCallExpr fc])
       | otherwise = error ("unsupported token type in function call: " ++ show (tokenType x))
 
-parsePrimaryFuncCall :: Token -> [Token.Token] -> Ast.NodeFuncCall
+parsePrimaryFuncCall :: Token -> [Token.Token] -> (Ast.NodeFuncCall, [Token.Token])
 parsePrimaryFuncCall id lst =
-  let (_, rest) = pExpect lst LParen
+  let (_, rest) = pExpect lst Token.LParen
   in let (fc, rest') = parseFuncCall id rest
-    in fc
+    in (fc, rest')
 
 parseTokens :: [Token.Token] -> [Ast.NodeFuncCall]
 parseTokens [] = undefined
@@ -59,7 +61,7 @@ parseTokens (x:xs) =
   case tokenType x of
     Token.EOF -> []
     Token.Comment -> parseTokens xs
-    Token.FuncCall -> parsePrimaryFuncCall x xs : parseTokens xs
+    Token.FuncCall -> let (fc, rest) = parsePrimaryFuncCall x xs in fc : parseTokens rest
     Token.Macro -> error ("macros are unsupported " ++ show (tokenValue x))
     Token.StringLiteral -> error $ "string literal not in function call " ++ show (tokenValue x)
     Token.Wildcard -> error ("wildcard is not supported " ++ show (tokenType x))
@@ -68,4 +70,3 @@ parseTokens (x:xs) =
 produceProgram :: [Token.Token] -> Ast.NodeProg
 produceProgram [] = Ast.NodeProg []
 produceProgram tokens = Ast.NodeProg $ parseTokens tokens
-
