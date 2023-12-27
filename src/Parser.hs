@@ -43,7 +43,6 @@ parseFuncCall id lst =
     in (fc, rest')
 
 parseTokens :: [Token.Token] -> [Ast.NodeFuncCall]
-parseTokens [] = undefined
 parseTokens (x:xs) =
   case tokenType x of
     Token.EOF -> []
