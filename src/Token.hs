@@ -4,10 +4,8 @@ data TokenType = TokenType
   | Comment
   | LParen
   | RParen
-  | Wildcard
   | FuncCall
   | IntegerLiteral
-  | Macro
   | StringLiteral
   | EOF
   deriving (Show, Eq)

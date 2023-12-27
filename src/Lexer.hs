@@ -38,7 +38,6 @@ lexFile (x:xs)
   | x == '"' =
     let (value, rest) = consumeUntil xs (== '"')
     in Token value StringLiteral : lexFile (tail rest)
-  | x == '*' = Token "*" Wildcard : lexFile xs
   | x == '(' = Token "(" LParen : lexFile xs
   | x == ')' = Token ")" RParen : lexFile xs
   | otherwise =

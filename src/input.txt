@@ -1,4 +1,12 @@
 // r("hello" "world")
 
-foo()
-bar()
+foo(
+  "ur"
+  "mom"
+  420
+)
+
+bar(
+  r()
+  69
+)
