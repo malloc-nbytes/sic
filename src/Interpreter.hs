@@ -53,7 +53,7 @@ writeFunc (x:xs) gl =
       | Ast.nodeFuncCallId f == "r" =
         case Ast.nodeFuncCallArgs f of
           (Ast.NodeIntegerLiteral n:args) -> (repeatFunc n args gl, gl')
-          _ -> error "invalid arguments for function r, needed `Expression`"
+          _ -> error "invalid arguments for function r, needed `Integer`, for the number of times to repeat"
       | Ast.nodeFuncCallId f == Utility.newlineFuncName =
         case Ast.nodeFuncCallArgs f of
           [] -> (newlineFunc [], gl')
