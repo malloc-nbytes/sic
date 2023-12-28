@@ -2,4 +2,9 @@
 
 set -xe
 
-ghc -o main Main.hs
+if [ "$1" == "clean" ];
+then
+    rm -rf *.hi *.o main
+else
+    ghc -o main Main.hs
+fi

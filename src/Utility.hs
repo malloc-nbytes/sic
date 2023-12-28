@@ -2,7 +2,8 @@ module Utility where
 
 import qualified Data.Map as Map
 
-data Global = Global
+data Global
+  = Global
   { wildcardLimit :: Int
   , iota :: Int
   , vars :: Map.Map String String

@@ -1,1 +1,1 @@
-write(iota() iota() iota())
+r()

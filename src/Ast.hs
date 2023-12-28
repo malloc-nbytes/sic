@@ -1,11 +1,13 @@
 module Ast where
 
-data NodeFuncCall = NodeFuncCall
+data NodeFuncCall
+  = NodeFuncCall
   { nodeFuncCallId :: String
   , nodeFuncCallArgs :: [NodeExpr]
   } deriving Show
 
-data NodeExpr = NodeExpr
+data NodeExpr
+  = NodeExpr
   | NodeFuncCallExpr NodeFuncCall
   | NodeStringLiteral String
   | NodeIntegerLiteral Int

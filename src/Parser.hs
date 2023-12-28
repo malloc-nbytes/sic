@@ -1,5 +1,4 @@
 module Parser where
-
 import Token
 import Ast
 
@@ -7,10 +6,14 @@ pExpect :: [Token.Token] -> Token.TokenType -> (Token.Token, [Token.Token])
 pExpect [] _ = error "no tokens in call to `expect ()`."
 pExpect (x:xs) t
   | tokenType x == t = (x, xs)
-  | otherwise = error $ "call to pExpect with differing token types, namely: expected: " ++
+  | otherwise = error $ "Call to pExpect () with differing token types, namely:\n  (expected: " ++
                 show t ++
-                " /= actual: " ++
-                show (tokenType x)
+                ") =/= (actual: " ++
+                show (tokenType x) ++
+                ")" ++
+                " (value: " ++ show (tokenValue x) ++ ")\n" ++
+                "Failed on: " ++ show x ++ "\n" ++
+                "Remaining: " ++ show xs
 
 pPeak :: [Token.Token] -> Maybe Token.Token
 pPeak [] = Nothing
@@ -20,13 +23,13 @@ tokenValueToStr :: Token.Token -> Int
 tokenValueToStr x = read (tokenValue x) :: Int
 
 parseFuncArgs :: Token -> [Token] -> (Ast.NodeFuncCall, [Token.Token])
-parseFuncArgs id [] = error ("could not parse" ++ show (tokenValue id))
+parseFuncArgs id [] = error ("Could not parse" ++ show (tokenValue id))
 parseFuncArgs id lst =
   let (args, rest) = f lst []
   in (Ast.NodeFuncCall (tokenValue id) args, rest)
   where
     f :: [Token.Token] -> [Ast.NodeExpr] -> ([Ast.NodeExpr], [Token.Token])
-    f [] _ = error "unterminated function call"
+    f [] _ = error "Unterminated function call"
     f (x:xs) acc
       | tokenType x == Token.RParen = (acc, xs)
       | tokenType x == Token.StringLiteral = f xs (acc ++ [Ast.NodeStringLiteral (tokenValue x)])
@@ -35,8 +38,8 @@ parseFuncArgs id lst =
       | tokenType x == Token.FuncCall =
         let (fc, rest) = parseFuncCall x xs
         in f rest (acc ++ [Ast.NodeFuncCallExpr fc])
-      | tokenType x == Token.EOF = error "unterminated function call"
-      | otherwise = error ("parseFuncArgs: unsupported token type in function call: " ++ show (tokenType x) ++ show (tokenValue x))
+      | tokenType x == Token.EOF = error ("Unterminated function call in " ++ show (tokenValue id) ++ " at EOF")
+      | otherwise = error ("parseFuncArgs: Unsupported token type in function call: " ++ show (tokenType x) ++ show (tokenValue x))
 
 parseFuncCall :: Token -> [Token.Token] -> (Ast.NodeFuncCall, [Token.Token])
 parseFuncCall id lst =

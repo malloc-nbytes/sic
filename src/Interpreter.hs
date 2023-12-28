@@ -6,51 +6,8 @@ import Token
 import Ast
 import Utility
 
--- data Global = Global
---   { wildcardLimit :: Int
---   , iota :: Int
---   , vars :: Map.Map String String
---   } deriving Show
-
--- data TokenType = TokenType
---   | Comment
---   | LParen
---   | RParen
---   | FuncCall
---   | IntegerLiteral
---   | StringLiteral
---   | NodeVariable
---   | EOF
---   deriving (Show, Eq)
-
--- data Token = Token
---   { tokenValue :: String
---   , tokenType :: TokenType
---   } deriving (Show)
-
--- data NodeFuncCall = NodeFuncCall
---   { nodeFuncCallId :: String
---   , nodeFuncCallArgs :: [NodeExpr]
---   } deriving Show
-
--- data NodeExpr = NodeExpr
---   | NodeFuncCallExpr NodeFuncCall
---   | NodeStringLiteral String
---   | NodeIntegerLiteral Int
---   | NodeVariable String
---   deriving Show
-
 wildcardLimitFunc :: Int -> Utility.Global -> Utility.Global
 wildcardLimitFunc n gl = gl {wildcardLimit = n}
-
-determineTypesMatch :: [Ast.NodeExpr] -> [Ast.NodeExpr] -> Bool
-determineTypesMatch [] [] = True
-determineTypesMatch (x:xs) (y:ys) =
-  case (x, y) of
-    (Ast.NodeIntegerLiteral _, Ast.NodeIntegerLiteral _) -> determineTypesMatch xs ys
-    (Ast.NodeStringLiteral _, Ast.NodeStringLiteral _) -> determineTypesMatch xs ys
-    (Ast.NodeFuncCallExpr _, Ast.NodeFuncCallExpr _) -> determineTypesMatch xs ys
-    _ -> False
 
 repeatFunc :: Int -> [Ast.NodeExpr] -> Utility.Global -> String
 repeatFunc _ [] _ = ""
@@ -86,7 +43,6 @@ writeFunc (x:xs) gl =
     Ast.NodeFuncCallExpr fc ->
       let (s, gl') = callFunc fc gl
       in s ++ writeFunc xs gl'
-      -- callFunc fc ++ writeFunc xs gl
     Ast.NodeVariable v -> case Map.lookup v (vars gl) of
       Just s -> s ++ writeFunc xs gl
       Nothing -> error $ "variable `" ++ v ++ "` has not been set"
@@ -97,7 +53,7 @@ writeFunc (x:xs) gl =
       | Ast.nodeFuncCallId f == "r" =
         case Ast.nodeFuncCallArgs f of
           (Ast.NodeIntegerLiteral n:args) -> (repeatFunc n args gl, gl')
-          _ -> error "invalid arguments for function r, needed `n`"
+          _ -> error "invalid arguments for function r, needed `Expression`"
       | Ast.nodeFuncCallId f == Utility.newlineFuncName =
         case Ast.nodeFuncCallArgs f of
           [] -> (newlineFunc [], gl')
@@ -113,7 +69,11 @@ writeFunc (x:xs) gl =
           [] -> (show (iota gl), incrementIota Nothing gl)
           [Ast.NodeIntegerLiteral n] -> (show (iota gl), incrementIota (Just n) gl)
           _ -> error "invalid arguments for function iota, requires 0 or 1 arguments"
-      | otherwise = error $ "unsupported function call: " ++ show (Ast.nodeFuncCallId f)
+      | otherwise =
+        error $ "unsupported function call:\n  " ++
+        show (Ast.nodeFuncCallId f) ++ show (Ast.nodeFuncCallArgs f) ++ ".\n" ++
+        "This most likely happend because of calling a function that is not supported by write().\n" ++
+        "Try moving the function call outside of write(). Otherwise, the function does not exist."
 
 interpret :: [Ast.NodeFuncCall] -> Utility.Global -> String
 interpret [] _ = ""
@@ -126,5 +86,8 @@ interpret (x:xs) gl
   | nodeFuncCallId x == Utility.varFuncName =
     case Ast.nodeFuncCallArgs x of
       (Ast.NodeVariable id:args) -> interpret xs (setVarFunc id args gl)
-      _ -> error ("invalid args of set()" ++ show (Ast.nodeFuncCallArgs x))
-  | otherwise = error $ "unsupported function call: " ++ show (nodeFuncCallId x)
+      _ -> error ("invalid args of var()" ++ show (Ast.nodeFuncCallArgs x))
+  | otherwise =
+    error $ "unsupported function call: " ++ show (nodeFuncCallId x) ++ show (nodeFuncCallArgs x) ++
+    "\nA possible cause of this is calling a function that is only available inside of write().\n" ++
+    "Try moving the function call inside of write(). Otherwise, the function does not exist."
