@@ -1,7 +1,7 @@
 module Lexer where
 
 import Token
-import Data.Char (isDigit, isAlpha)
+import Data.Char (isDigit, isAlpha, isAlphaNum)
 
 isIgnorable :: Char -> Bool
 isIgnorable c = c == '\t' || c == '\n' || c == ' '
@@ -40,6 +40,9 @@ lexFile (x:xs)
     in Token value StringLiteral : lexFile (tail rest)
   | x == '(' = Token "(" LParen : lexFile xs
   | x == ')' = Token ")" RParen : lexFile xs
+  | x == '#' =
+    let (value, rest) = consumeUntil xs (not . isAlphaNum)
+    in Token value Variable : lexFile (tail rest)
   | otherwise =
     let (value, rest) = consumeUntil (x : xs) (not . isAlpha)
     in Token value FuncCall : lexFile rest

@@ -1,4 +1,7 @@
 module Main where
+
+import qualified Data.Map as Map
+
 import Lexer
 import Parser
 import Interpreter
@@ -15,6 +18,6 @@ main = do
   src <- readFile filepath
   let tokens = Lexer.lexFile src
   let nodeProg = Parser.produceProgram tokens
-  let result = Interpreter.interpret nodeProg (Global 5 0)
+  let result = Interpreter.interpret nodeProg (Global 5 Map.empty)
   writeFile outputFilepath result
   --  Interpreter.interpret . Parser.produceProgram . Lexer.lexFile =<< readFile filepath

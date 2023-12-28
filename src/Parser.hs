@@ -31,10 +31,12 @@ parseFuncArgs id lst =
       | tokenType x == Token.RParen = (acc, xs)
       | tokenType x == Token.StringLiteral = f xs (acc ++ [Ast.NodeStringLiteral (tokenValue x)])
       | tokenType x == Token.IntegerLiteral = f xs (acc ++ [Ast.NodeIntegerLiteral (tokenValueToStr x)])
+      | tokenType x == Token.Variable = f xs (acc ++ [Ast.NodeVariable (tokenValue x)])
       | tokenType x == Token.FuncCall =
         let (fc, rest) = parseFuncCall x xs
         in f rest (acc ++ [Ast.NodeFuncCallExpr fc])
-      | otherwise = error ("unsupported token type in function call: " ++ show (tokenType x))
+      | tokenType x == Token.EOF = (acc, xs)
+      | otherwise = error ("parseFuncArgs: unsupported token type in function call: " ++ show (tokenType x) ++ show (tokenValue x))
 
 parseFuncCall :: Token -> [Token.Token] -> (Ast.NodeFuncCall, [Token.Token])
 parseFuncCall id lst =
@@ -43,13 +45,16 @@ parseFuncCall id lst =
     in (fc, rest')
 
 parseTokens :: [Token.Token] -> [Ast.NodeFuncCall]
+parseTokens [] = []
 parseTokens (x:xs) =
   case tokenType x of
     Token.EOF -> []
     Token.Comment -> parseTokens xs
     Token.FuncCall -> let (fc, rest) = parseFuncCall x xs in fc : parseTokens rest
     Token.StringLiteral -> error $ "string literal not in function call " ++ show (tokenValue x)
-    _ -> error $ "unsupported TokenType " ++ show (tokenType x)
+    Token.IntegerLiteral -> error $ "integer literal not in function call " ++ show (tokenValue x)
+    Token.Variable -> error $ "variable not in function call " ++ show (tokenValue x)
+    _ -> error $ "unsupported TokenType " ++ show (tokenType x) ++ show (tokenValue x)
 
 produceProgram :: [Token.Token] -> [Ast.NodeFuncCall]
 produceProgram [] = []

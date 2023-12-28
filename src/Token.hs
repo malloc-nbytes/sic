@@ -7,6 +7,7 @@ data TokenType = TokenType
   | FuncCall
   | IntegerLiteral
   | StringLiteral
+  | Variable
   | EOF
   deriving (Show, Eq)
 

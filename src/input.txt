@@ -1,17 +1,2 @@
-limitWildcard(100)
-
-write(
-  r(
-    4
-    "hi"
-    n()
-    "there"
-    n()
-    "hahahah"
-    n()
-  )
-  "HELLO"
-  n()
-)
-
-write(r(1000 w()))
+var(#x 1234)
+write(#x)

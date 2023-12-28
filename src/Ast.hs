@@ -9,4 +9,5 @@ data NodeExpr = NodeExpr
   | NodeFuncCallExpr NodeFuncCall
   | NodeStringLiteral String
   | NodeIntegerLiteral Int
+  | NodeVariable String
   deriving Show
