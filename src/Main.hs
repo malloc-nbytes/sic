@@ -24,6 +24,6 @@ main = do
   let tokens = Lexer.lexFile src
   -- debugTokenPrintValues tokens
   let nodeProg = Parser.produceProgram tokens
-  let result = Interpreter.interpret nodeProg (Global 5 Map.empty)
+  let result = Interpreter.interpret nodeProg (Global 5 0 Map.empty)
   writeFile outputFilepath result
   --  Interpreter.interpret . Parser.produceProgram . Lexer.lexFile =<< readFile filepath

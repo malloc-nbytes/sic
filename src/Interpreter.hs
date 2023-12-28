@@ -8,6 +8,7 @@ import Utility
 
 -- data Global = Global
 --   { wildcardLimit :: Int
+--   , iota :: Int
 --   , vars :: Map.Map String String
 --   } deriving Show
 
@@ -67,6 +68,12 @@ newlineFunc (x:xs) =
 wildcardFunc :: Int -> String
 wildcardFunc n = take n ['a' .. 'z']
 
+incrementIota :: Maybe Int -> Utility.Global -> Utility.Global
+incrementIota n gl =
+  case n of
+    Just n' -> gl {iota = iota gl + n'}
+    Nothing -> gl {iota = iota gl + 1}
+
 setVarFunc :: String -> [Ast.NodeExpr] -> Utility.Global -> Utility.Global
 setVarFunc id args gl = gl {vars = Map.insert id (writeFunc args gl) (vars gl)}
 
@@ -76,28 +83,36 @@ writeFunc (x:xs) gl =
   case x of
     Ast.NodeStringLiteral s -> s ++ writeFunc xs gl
     Ast.NodeIntegerLiteral i -> show i ++ writeFunc xs gl
-    Ast.NodeFuncCallExpr f -> callFunc f ++ writeFunc xs gl
+    Ast.NodeFuncCallExpr fc ->
+      let (s, gl') = callFunc fc gl
+      in s ++ writeFunc xs gl'
+      -- callFunc fc ++ writeFunc xs gl
     Ast.NodeVariable v -> case Map.lookup v (vars gl) of
       Just s -> s ++ writeFunc xs gl
       Nothing -> error $ "variable `" ++ v ++ "` has not been set"
     _ -> error "unsupported expression"
   where
-    callFunc :: Ast.NodeFuncCall -> String
-    callFunc f
+    callFunc :: Ast.NodeFuncCall -> Utility.Global -> (String, Utility.Global)
+    callFunc f gl'
       | Ast.nodeFuncCallId f == "r" =
         case Ast.nodeFuncCallArgs f of
-          (Ast.NodeIntegerLiteral n:args) -> repeatFunc n args gl
+          (Ast.NodeIntegerLiteral n:args) -> (repeatFunc n args gl, gl')
           _ -> error "invalid arguments for function r, needed `n`"
       | Ast.nodeFuncCallId f == Utility.newlineFuncName =
         case Ast.nodeFuncCallArgs f of
-          [] -> newlineFunc []
-          [Ast.NodeIntegerLiteral n] -> newlineFunc [Ast.NodeIntegerLiteral n]
+          [] -> (newlineFunc [], gl')
+          [Ast.NodeIntegerLiteral n] -> (newlineFunc [Ast.NodeIntegerLiteral n], gl')
           _ -> error "invalid arguments for function n"
       | Ast.nodeFuncCallId f == Utility.wildcardFuncName =
         case Ast.nodeFuncCallArgs f of
-          [] -> wildcardFunc (wildcardLimit gl)
-          [Ast.NodeIntegerLiteral n] -> wildcardFunc n
+          [] -> (wildcardFunc (wildcardLimit gl), gl')
+          [Ast.NodeIntegerLiteral n] -> (wildcardFunc n, gl')
           _ -> error "invalid arguments for function w, requires 1 argument"
+      | Ast.nodeFuncCallId f == Utility.varIotaFuncName =
+        case Ast.nodeFuncCallArgs f of
+          [] -> (show (iota gl), incrementIota Nothing gl)
+          [Ast.NodeIntegerLiteral n] -> (show (iota gl), incrementIota (Just n) gl)
+          _ -> error "invalid arguments for function iota, requires 0 or 1 arguments"
       | otherwise = error $ "unsupported function call: " ++ show (Ast.nodeFuncCallId f)
 
 interpret :: [Ast.NodeFuncCall] -> Utility.Global -> String

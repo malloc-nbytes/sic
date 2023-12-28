@@ -1,2 +1,1 @@
-var(#x "a")
-write(r(2 #x) "hello")
+write(iota() iota() iota())
