@@ -6,3 +6,18 @@ data Global = Global
   { wildcardLimit :: Int
   , vars :: Map.Map String String
   } deriving Show
+
+writeFuncName :: String
+writeFuncName = "write"
+
+limitWildCardName :: String
+limitWildCardName = "limitWildCard"
+
+newlineFuncName :: String
+newlineFuncName = "n"
+
+wildcardFuncName :: String
+wildcardFuncName = "w"
+
+varFuncName :: String
+varFuncName = "var"

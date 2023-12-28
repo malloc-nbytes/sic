@@ -88,12 +88,12 @@ writeFunc (x:xs) gl =
         case Ast.nodeFuncCallArgs f of
           (Ast.NodeIntegerLiteral n:args) -> repeatFunc n args gl
           _ -> error "invalid arguments for function r, needed `n`"
-      | Ast.nodeFuncCallId f == "n" =
+      | Ast.nodeFuncCallId f == Utility.newlineFuncName =
         case Ast.nodeFuncCallArgs f of
           [] -> newlineFunc []
           [Ast.NodeIntegerLiteral n] -> newlineFunc [Ast.NodeIntegerLiteral n]
           _ -> error "invalid arguments for function n"
-      | Ast.nodeFuncCallId f == "w" =
+      | Ast.nodeFuncCallId f == Utility.wildcardFuncName =
         case Ast.nodeFuncCallArgs f of
           [] -> wildcardFunc (wildcardLimit gl)
           [Ast.NodeIntegerLiteral n] -> wildcardFunc n
@@ -103,12 +103,12 @@ writeFunc (x:xs) gl =
 interpret :: [Ast.NodeFuncCall] -> Utility.Global -> String
 interpret [] _ = ""
 interpret (x:xs) gl
-  | nodeFuncCallId x == "write" = writeFunc (nodeFuncCallArgs x) gl ++ interpret xs gl
-  | nodeFuncCallId x == "limitWildcard" =
+  | nodeFuncCallId x == Utility.writeFuncName = writeFunc (nodeFuncCallArgs x) gl ++ interpret xs gl
+  | nodeFuncCallId x == Utility.limitWildCardName =
     case nodeFuncCallArgs x of
       [Ast.NodeIntegerLiteral n] -> interpret xs (wildcardLimitFunc n gl)
       _ -> error "invalid arguments for function limitWildcard, needed `n`"
-  | nodeFuncCallId x == "var" =
+  | nodeFuncCallId x == Utility.varFuncName =
     case Ast.nodeFuncCallArgs x of
       (Ast.NodeVariable id:args) -> interpret xs (setVarFunc id args gl)
       _ -> error ("invalid args of set()" ++ show (Ast.nodeFuncCallArgs x))

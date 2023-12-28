@@ -42,7 +42,7 @@ lexFile (x:xs)
   | x == ')' = Token ")" RParen : lexFile xs
   | x == '#' =
     let (value, rest) = consumeUntil xs (not . isAlphaNum)
-    in Token value Variable : lexFile (tail rest)
+    in Token value Variable : lexFile rest
   | otherwise =
     let (value, rest) = consumeUntil (x : xs) (not . isAlpha)
     in Token value FuncCall : lexFile rest

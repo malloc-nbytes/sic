@@ -35,7 +35,7 @@ parseFuncArgs id lst =
       | tokenType x == Token.FuncCall =
         let (fc, rest) = parseFuncCall x xs
         in f rest (acc ++ [Ast.NodeFuncCallExpr fc])
-      | tokenType x == Token.EOF = (acc, xs)
+      | tokenType x == Token.EOF = error "unterminated function call"
       | otherwise = error ("parseFuncArgs: unsupported token type in function call: " ++ show (tokenType x) ++ show (tokenValue x))
 
 parseFuncCall :: Token -> [Token.Token] -> (Ast.NodeFuncCall, [Token.Token])
