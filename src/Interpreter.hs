@@ -1,6 +1,8 @@
 module Interpreter where
 
-import Token ()
+-- [6, 23, 2, 20, 17, 14, 3, 16, 0, 7, 12, 6, 20, 21, 21, 15, 0, 6, 6, 19, 10, 21, 11, 4, 13, 8, 14, 16, 6, 6, 10, 17, 10, 0, 11, 24, 15, 22, 4, 22, 16, 2, 23, 10, 17, 17, 9, 16, 6, 17, 7, 1, 9, 25, 8, 8, 8, 2, 22, 20, 20, 7, 25, 9, 10, 19, 14, 7, 8, 12, 11, 19, 13, 6, 6, 0, 11, 5, 1, 4, 10, 6, 19, 1, 0, 7, 14, 17, 19, 14, 12, 11, 21, 9, 7, 8, 5, 9, 19, 0]
+
+import Token
 import Ast
 import Utility
 
@@ -32,6 +34,50 @@ import Utility
 
 -- newtype NodeProg = NodeProg [NodeFuncCall] deriving Show
 
+-- let lst = [1,2,3,4,5]
+-- pair(1, pair(2, pair(3, pair(4, pair(5, _)))))
+-- (x:xs)
+--   x = 1
+--   xs = pair(2, pair(3, pair(4, pair(5, _))))
+
+-- getRandomNum :: Utility.Global -> (Int, Utility.Global)
+-- getRandomNum gl =
+--   let lst = [6, 23, 2,
+--              20, 17, 14,
+--              3, 16, 0,
+--              7, 12, 6,
+--              20, 21, 21,
+--              15, 0, 6,
+--              6, 19, 10,
+--              21, 11, 4,
+--              13, 8, 14,
+--              16, 6, 6,
+--              10, 17, 10,
+--              0, 11, 24,
+--              15, 22, 4,
+--              22, 16, 2,
+--              23, 10, 17,
+--              17, 9, 16,
+--              6, 17, 7,
+--              1, 9, 25,
+--              8, 8, 8,
+--              2, 22, 20,
+--              20, 7, 25,
+--              9, 10, 19,
+--              14, 7, 8,
+--              12, 11, 19,
+--              13, 6, 6,
+--              0, 11, 5,
+--              1, 4, 10,
+--              6, 19, 1,
+--              0, 7, 14,
+--              17, 19, 14,
+--              12, 11, 21,
+--              9, 7, 8,
+--              5, 9, 19, 0]
+--   in
+--     (lst !! seed gl, Utility.Global (wildcardLimit gl) (seed gl + 1))
+
 wildcardLimitFunc :: Int -> Utility.Global -> Utility.Global
 wildcardLimitFunc n gl = gl {wildcardLimit = n}
 
@@ -57,9 +103,8 @@ newlineFunc (x:xs) =
     Ast.NodeStringLiteral s -> s ++ newlineFunc xs
     _ -> error "unsupported expression"
 
--- Generates random chars from a-z with length wildcardLimit
-wildcardFunc :: Utility.Global -> String
-wildcardFunc gl = take (wildcardLimit gl) ['a' .. 'z']
+wildcardFunc :: Int -> String
+wildcardFunc n = take n ['a' .. 'z']
 
 writeFunc :: [Ast.NodeExpr] -> Utility.Global -> String
 writeFunc [] _ = ""
@@ -83,8 +128,9 @@ writeFunc (x:xs) gl =
           _ -> error "invalid arguments for function n"
       | Ast.nodeFuncCallId f == "w" =
         case Ast.nodeFuncCallArgs f of
-          [] -> wildcardFunc gl
-          _ -> error "invalid arguments for function w, should take no arguments"
+          [] -> wildcardFunc (wildcardLimit gl)
+          [Ast.NodeIntegerLiteral n] -> wildcardFunc n
+          _ -> error "invalid arguments for function w, requires 1 argument"
       | otherwise = error $ "unsupported function call: " ++ show (Ast.nodeFuncCallId f)
 
 interpret :: [Ast.NodeFuncCall] -> Utility.Global -> String

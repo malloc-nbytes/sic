@@ -1,5 +1,6 @@
 module Utility where
 
-newtype Global = Global
+data Global = Global
   { wildcardLimit :: Int
+  , seed :: Int
   } deriving Show
