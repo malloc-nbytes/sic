@@ -75,10 +75,17 @@ writeFunc (x:xs) gl =
         "This most likely happend because of calling a function that is not supported by write().\n" ++
         "Try moving the function call outside of write(). Otherwise, the function does not exist."
 
-interpret :: [Ast.NodeFuncCall] -> Utility.Global -> String
-interpret [] _ = ""
+changeOutputFilepath :: String -> Utility.Global -> Utility.Global
+changeOutputFilepath [] _ = error "empty name to changeOutputFilepath ()"
+changeOutputFilepath s gl = gl {outputFilepath = s}
+
+interpret :: [Ast.NodeFuncCall] -> Utility.Global -> (String, String)
+interpret [] gl = ("", outputFilepath gl)
 interpret (x:xs) gl
-  | nodeFuncCallId x == Utility.writeFuncName = writeFunc (nodeFuncCallArgs x) gl ++ interpret xs gl
+  | nodeFuncCallId x == Utility.writeFuncName =
+    let writeResult = writeFunc (nodeFuncCallArgs x) gl
+    in let (rest, outfp) = interpret xs gl
+       in (writeResult ++ rest, outfp)
   | nodeFuncCallId x == Utility.limitWildCardName =
     case nodeFuncCallArgs x of
       [Ast.NodeIntegerLiteral n] -> interpret xs (wildcardLimitFunc n gl)
@@ -87,6 +94,11 @@ interpret (x:xs) gl
     case Ast.nodeFuncCallArgs x of
       (Ast.NodeVariable id:args) -> interpret xs (setVarFunc id args gl)
       _ -> error ("invalid args of var()" ++ show (Ast.nodeFuncCallArgs x))
+  | nodeFuncCallId x == Utility.outputFuncName =
+    case nodeFuncCallArgs x of
+      [] -> error ("invalid args to " ++ Utility.outputFuncName)
+      lst -> let gl' = changeOutputFilepath (writeFunc lst gl) gl
+             in interpret xs gl'
   | otherwise =
     error $ "unsupported function call: " ++ show (nodeFuncCallId x) ++ show (nodeFuncCallArgs x) ++
     "\nA possible cause of this is calling a function that is only available inside of write().\n" ++

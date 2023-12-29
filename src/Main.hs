@@ -26,16 +26,18 @@ run (x:y:_) =
     let nodeProg = Parser.produceProgram tokens
     putStrLn "[tfc Parser]:"
     print nodeProg >> putStrLn ""
-    let result = Interpreter.interpret nodeProg (Global 5 0 Map.empty)
-    putStrLn "[tfc Interpreter]:"
-    print result >> putStrLn ""
-    writeFile outFp result
+    let (result, outputFilepath) = Interpreter.interpret nodeProg (Global "./out.txt" 5 0 Map.empty)
+    writeFile outputFilepath result
+    -- putStrLn "[tfc Interpreter]:"
+    -- print result >> putStrLn ""
+    -- writeFile outFp result
     putStrLn "[tfc] Wrote to:"
-    putStrLn outFp
+    putStrLn outputFilepath
 
 main :: IO ()
 main = do
-  args <- getArgs
-  case args of
-    [] -> usage
-    _ -> run args
+  run ["./input.txt", "output.txt"]
+  -- args <- getArgs
+  -- case args of
+  --   [] -> usage
+  --   _ -> run args

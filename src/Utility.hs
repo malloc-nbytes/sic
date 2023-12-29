@@ -4,10 +4,14 @@ import qualified Data.Map as Map
 
 data Global
   = Global
-  { wildcardLimit :: Int
+  { outputFilepath :: String
+  , wildcardLimit :: Int
   , iota :: Int
   , vars :: Map.Map String String
   } deriving Show
+
+outputFuncName :: String
+outputFuncName = "output"
 
 writeFuncName :: String
 writeFuncName = "write"

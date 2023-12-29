@@ -1,1 +1,4 @@
-r()
+var(#filepath r(3 "output") ".txt")
+output(#filepath)
+
+write("hello world")
