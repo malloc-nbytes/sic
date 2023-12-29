@@ -12,32 +12,28 @@ import Token
 usage :: IO ()
 usage = do
   putStrLn "tfc usage:"
-  putStrLn "  ./tfc <input-file> <output-file>"
+  putStrLn "  ./tfc <input-file>"
 
 run :: [String] -> IO ()
-run [x] = undefined
-run (x:y:_) =
-  let (inputFp, outFp) = (x, y)
+run (x:y:_) = undefined
+run [x] =
+  let infp = x
   in do
-    src <- readFile inputFp
+    src <- readFile infp
     let tokens = Lexer.lexFile src
-    putStrLn "[tfc Lexer]:"
-    print tokens >> putStrLn ""
+    -- putStrLn "[tfc Lexer]:"
+    -- print tokens >> putStrLn ""
     let nodeProg = Parser.produceProgram tokens
-    putStrLn "[tfc Parser]:"
-    print nodeProg >> putStrLn ""
+    -- putStrLn "[tfc Parser]:"
+    -- print nodeProg >> putStrLn ""
     let (result, outputFilepath) = Interpreter.interpret nodeProg (Global "./out.txt" 5 0 Map.empty)
     writeFile outputFilepath result
-    -- putStrLn "[tfc Interpreter]:"
-    -- print result >> putStrLn ""
-    -- writeFile outFp result
     putStrLn "[tfc] Wrote to:"
     putStrLn outputFilepath
 
 main :: IO ()
 main = do
-  run ["./input.txt", "output.txt"]
-  -- args <- getArgs
-  -- case args of
-  --   [] -> usage
-  --   _ -> run args
+  args <- getArgs
+  case args of
+    [x] -> run args
+    _ -> usage
