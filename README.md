@@ -10,7 +10,7 @@ Test File Creation
 
 # Usage
 ## Syntax
-As stated previously, everything is a function that contains some number of arguments. For the most part, functions take any number of arguments (except a few). Arguments to a function are separated by a space (not a comma). Strings are surrounded in quotes and integer literals are just numbers that you provide. Functions must start with their name followed by `(`, list of arguments, then `)`.
+As stated previously, everything is a function that contains some number of arguments. For the most part, functions take any number of arguments (except a few). Arguments to a function are separated by a space (not a comma). Strings are surrounded in quotes and integer literals are just numbers that you provide. Functions must start with their name followed by `(`, list of arguments, then `)`. Comments start with `//` and will skip until the end of the line.
 
 There are two different types of functions, _inner_ and _outer_. Inner functions can only be called inside of the following functions:
 1. `write()`
@@ -23,7 +23,7 @@ Valid function call:
 ```write("foo" n() "bar" r(3 "hello" r(2 "baz") 54321) w(4) " " n() #someVariable)```.
 
 Invalid function call:
-```r(var(#x "hello") write(" "))```
+```r(3 var(#x "hello") write(" "))```
 
 ### Outer Functions
 
@@ -40,3 +40,13 @@ Invalid function call:
 2. `n(~Z)` - Takes 0 or 1 integers and inserts a newline based on the number provided (or 1 if no number is given).
 3. `w(~Z)` - Takes 0 or 1 integers and inserts `Z` characters (or 5 if no number is provided). Currently it takes letters in-order, but in the future it will be random.
 4. `iota(~Z)` - Produces an integer that is incremented every time it is called (or will increment by `Z` if provided).
+
+## Running it
+`tfc <input_filepath>`
+
+# Installation
+1. `git clone https://github.com/malloc-nbytes/tfc.git`
+2. `cd ./tfc/src/`
+3. `./build.sh clean` (if built once already)
+4. `./build.sh`
+5. `./install.sh`

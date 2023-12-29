@@ -1,0 +1,4 @@
+var(#filepath "output.txt")
+output(#filepath)
+
+write("This text is being written to: " #filepath)

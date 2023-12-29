@@ -1,0 +1,10 @@
+// #filepath = supersupersuper.txt
+var(#filepath r(3 "super") ".txt")
+output(#filepath)
+
+write(
+  r(2
+    123 " " 456 " " 789 n()
+  )
+  "foo bar baz"
+)
