@@ -4,7 +4,7 @@ set -xe
 
 if [ "$1" == "clean" ];
 then
-    rm -rf *.hi *.o tfc
+    rm -rf *.hi *.o sic
 else
-    ghc -o tfc Main.hs
+    ghc -o sic Main.hs
 fi

@@ -11,8 +11,8 @@ import Token
 
 usage :: IO ()
 usage = do
-  putStrLn "tfc usage:"
-  putStrLn "  ./tfc <input-file>"
+  putStrLn "sic usage:"
+  putStrLn "  ./sic <input-file>"
 
 run :: [String] -> IO ()
 run (x:y:_) = undefined
@@ -24,7 +24,7 @@ run [x] =
     let nodeProg = Parser.produceProgram tokens
     let (result, gl) = Interpreter.interpret nodeProg (Global "./out.txt" 5 0 Map.empty)
     writeFile (outputFilepath gl) result
-    putStrLn "[tfc] Wrote to:"
+    putStrLn "[sic] Wrote to:"
     putStrLn (outputFilepath gl)
 
 main :: IO ()

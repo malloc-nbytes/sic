@@ -1,8 +1,8 @@
-# tfc
+# sic
 Test File Creation
 
 # Description
-`tfc` is a program which takes a list of *functions* and *arguments* which then produces a text file based on the functions called.
+`sic` is a program which takes a list of *functions* and *arguments* which then produces a text file based on the functions called.
 
 # Requirements
 - Haskell
@@ -47,18 +47,18 @@ See `./examples/` for examples.
 ## Building
 To build, do the following:
 ```
-git clone https://www.github.com/malloc-nbytes/tfc.git/
-cd ./tfc/src/
+git clone https://www.github.com/malloc-nbytes/sic.git/
+cd ./sic/src/
 ./build.sh
 ```
 
 ## Running it
-`./tfc <input_filepath>`
+`./sic <input_filepath>`
 
 ## Installation
 ```
-git clone https://github.com/malloc-nbytes/tfc.git
-cd ./tfc/src/
+git clone https://github.com/malloc-nbytes/sic.git
+cd ./sic/src/
 ./build.sh clean (if built once already)
 ./build.sh
 ./install.sh
