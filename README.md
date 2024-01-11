@@ -63,3 +63,8 @@ cd ./sic/src/
 ./build.sh
 ./install.sh
 ```
+
+# Issues
+1. Variable names with `_` in the name results in an infinite loop.
+2. A string literal missing the first quote but has the ending will result in an infinite loop.
+3. A string literal missing the closing quote will result in a not-so-helpful error message.
