@@ -42,7 +42,7 @@ Invalid function call:
 3. `w(~Z)` - Takes 0 or 1 integers and inserts `Z` characters (or 5 if no number is provided). Currently it takes letters in-order, but in the future it will be random.
 4. `iota(~Z)` - Produces an integer that is incremented every time it is called (or will increment by `Z` if provided).
 
-See ./examples/ for examples.
+See `./examples/` for examples.
 
 ## Building
 To build, do the following:
