@@ -1,5 +1,5 @@
 # sic
-Test File Creation
+Sample Input Creator
 
 # Description
 `sic` is a program which takes a list of *functions* and *arguments* which then produces a text file based on the functions called.
