@@ -55,7 +55,7 @@ cd ./tfc/src/
 ## Running it
 `./tfc <input_filepath>`
 
-# Installation
+## Installation
 ```
 git clone https://github.com/malloc-nbytes/tfc.git
 cd ./tfc/src/
