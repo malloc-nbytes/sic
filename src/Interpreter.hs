@@ -12,7 +12,6 @@ wildcardLimitFunc n gl = gl {wildcardLimit = n}
 repeatFunc :: Int -> [Ast.NodeExpr] -> Utility.Global -> String
 repeatFunc _ [] _ = ""
 repeatFunc 0 _ _ = ""
--- repeatFunc n lst gl = writeFunc lst gl ++ repeatFunc (n - 1) lst gl
 repeatFunc n lst gl =
   let (s, gl') = writeFunc lst gl
   in s ++ repeatFunc (n - 1) lst gl'
@@ -35,7 +34,6 @@ incrementIota n gl =
     Nothing -> gl {iota = iota gl + 1}
 
 setVarFunc :: String -> [Ast.NodeExpr] -> Utility.Global -> Utility.Global
--- setVarFunc id args gl = gl {vars = Map.insert id (writeFunc args gl) (vars gl)}
 setVarFunc id args gl =
   let (s, gl') = writeFunc args gl
   in gl' {vars = Map.insert id s (vars gl')}
@@ -44,23 +42,17 @@ writeFunc :: [Ast.NodeExpr] -> Utility.Global -> (String, Utility.Global)
 writeFunc [] gl = ("", gl)
 writeFunc (x:xs) gl =
   case x of
-    -- Ast.NodeStringLiteral s -> s ++ writeFunc xs gl
     Ast.NodeStringLiteral s ->
       let (s', gl') = writeFunc xs gl
       in (s ++ s', gl')
-    -- Ast.NodeIntegerLiteral i -> show i ++ writeFunc xs gl
     Ast.NodeIntegerLiteral i ->
       let (s, gl') = writeFunc xs gl
       in (show i ++ s, gl')
     Ast.NodeFuncCallExpr fc ->
-      -- let (s, gl') = callFunc fc gl
-      -- in s ++ writeFunc xs gl'
       let (s, gl') = callFunc fc gl
       in let (s', gl'') = writeFunc xs gl'
          in (s ++ s', gl'')
     Ast.NodeVariable v -> case Map.lookup v (vars gl) of
-      -- Just s -> s ++ writeFunc xs gl
-      -- Nothing -> error $ "variable `" ++ v ++ "` has not been set"
       Just s ->
         let (s', gl') = writeFunc xs gl
         in (s ++ s', gl')
@@ -102,9 +94,6 @@ interpret :: [Ast.NodeFuncCall] -> Utility.Global -> (String, Utility.Global)
 interpret [] gl = ("", gl)
 interpret (x:xs) gl
   | nodeFuncCallId x == Utility.writeFuncName =
-    -- let writeResult = writeFunc (nodeFuncCallArgs x) gl
-    -- in let (rest, outfp) = interpret xs gl
-    --    in (writeResult ++ rest, outfp)
     let (writeResult, gl') = writeFunc (nodeFuncCallArgs x) gl
     in let (rest, gl'') = interpret xs gl'
        in (writeResult ++ rest, gl'')
@@ -119,8 +108,6 @@ interpret (x:xs) gl
   | nodeFuncCallId x == Utility.outputFuncName =
     case nodeFuncCallArgs x of
       [] -> error ("invalid args to " ++ Utility.outputFuncName)
-      -- lst -> let gl' = changeOutputFilepath (writeFunc lst gl) gl
-      --        in interpret xs gl'
       lst ->
         let (s, gl') = writeFunc lst gl
         in let gl'' = changeOutputFilepath s gl'
