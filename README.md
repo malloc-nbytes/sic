@@ -9,6 +9,7 @@ Test File Creation
   `https://www.haskell.org/downloads/`
 
 # Usage
+
 ## Syntax
 As stated previously, everything is a function that contains some number of arguments. For the most part, functions take any number of arguments (except a few). Arguments to a function are separated by a space (not a comma). Strings are surrounded in quotes and integer literals are just numbers that you provide. Functions must start with their name followed by `(`, list of arguments, then `)`. Comments start with `//` and will skip until the end of the line. You can also use the escape character `\` to have quotes inside of a string literal.
 
@@ -41,14 +42,24 @@ Invalid function call:
 3. `w(~Z)` - Takes 0 or 1 integers and inserts `Z` characters (or 5 if no number is provided). Currently it takes letters in-order, but in the future it will be random.
 4. `iota(~Z)` - Produces an integer that is incremented every time it is called (or will increment by `Z` if provided).
 
-## Running it
-`tfc <input_filepath>`
-
 See ./examples/ for examples.
 
+## Building
+To build, do the following:
+```
+git clone https://www.github.com/malloc-nbytes/tfc.git/
+cd ./tfc/src/
+./build.sh
+```
+
+## Running it
+`./tfc <input_filepath>`
+
 # Installation
-1. `git clone https://github.com/malloc-nbytes/tfc.git`
-2. `cd ./tfc/src/`
-3. `./build.sh clean` (if built once already)
-4. `./build.sh`
-5. `./install.sh`
+```
+git clone https://github.com/malloc-nbytes/tfc.git
+cd ./tfc/src/
+./build.sh clean (if built once already)
+./build.sh
+./install.sh
+```
