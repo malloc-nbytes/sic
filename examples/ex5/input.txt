@@ -1,0 +1,9 @@
+output("output.txt")
+
+var(#zeroOneTwo iota() " " iota() " " iota())
+
+// Prints:
+//   0 1 2
+//   0 1 2
+//   0 1 2
+write(r(3 #zeroOneTwo n()))

@@ -2,6 +2,7 @@
 var(#filepath r(3 "super") ".txt")
 output(#filepath)
 
+// Whitespace, newlines, and tabs do not matter.
 write(
   r(2
     123 " " 456 " " 789 n()

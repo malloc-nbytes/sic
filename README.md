@@ -10,7 +10,7 @@ Test File Creation
 
 # Usage
 ## Syntax
-As stated previously, everything is a function that contains some number of arguments. For the most part, functions take any number of arguments (except a few). Arguments to a function are separated by a space (not a comma). Strings are surrounded in quotes and integer literals are just numbers that you provide. Functions must start with their name followed by `(`, list of arguments, then `)`. Comments start with `//` and will skip until the end of the line.
+As stated previously, everything is a function that contains some number of arguments. For the most part, functions take any number of arguments (except a few). Arguments to a function are separated by a space (not a comma). Strings are surrounded in quotes and integer literals are just numbers that you provide. Functions must start with their name followed by `(`, list of arguments, then `)`. Comments start with `//` and will skip until the end of the line. You can also use the escape character `\` to have quotes inside of a string literal.
 
 There are two different types of functions, _inner_ and _outer_. Inner functions can only be called inside of the following functions:
 1. `write()`
@@ -43,6 +43,8 @@ Invalid function call:
 
 ## Running it
 `tfc <input_filepath>`
+
+See ./examples/ for examples.
 
 # Installation
 1. `git clone https://github.com/malloc-nbytes/tfc.git`

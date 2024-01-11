@@ -1,2 +1,6 @@
+// Set the output filepath. If not provided,
+// it sets it to `out.txt` be default.
 output("output.txt")
+
+// Call to the `write()` function to `output.txt`.
 write("hello world!")

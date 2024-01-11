@@ -1,0 +1,7 @@
+output("output.txt")
+
+var(#studentInfo "\"lname, fname\"," "email")
+
+// prints: "lname, fname,email IOTA() @gmail.com \n"
+// 100 times.
+write(r(100 #studentInfo iota() "@gmail.com" n()))

@@ -1,4 +1,7 @@
+// You can save patterns as variables.
 var(#filepath "output.txt")
 output(#filepath)
 
+// Variables must start with `#` when being created
+// and being referenced to.
 write("This text is being written to: " #filepath)
